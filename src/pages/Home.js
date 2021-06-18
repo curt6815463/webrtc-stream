@@ -1,11 +1,11 @@
-import React, { useReducer } from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import Streamer from "../components/Streamer.js";
-import stream from "../reducers/stream.js";
-
+// import stream from "../reducers/stream.js";
+import { StoreContext } from "../components/StoreProvider.js";
 const Home = () => {
-  const [state, dispatch] = useReducer(stream);
-  console.log("home", state);
+  const [state, dispatch] = useContext(StoreContext);
+  const localStreamSource = state.stream.local.streamSource;
   const openWebcam = async () => {
     const localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
@@ -26,7 +26,7 @@ const Home = () => {
   return (
     <HomeStyled>
       <StreamrWrapper>
-        <Streamer></Streamer>
+        <Streamer streamSource={localStreamSource}></Streamer>
       </StreamrWrapper>
       <ControllerWrapper>
         <OpenWebController>
