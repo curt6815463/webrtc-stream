@@ -6,7 +6,9 @@ export const defaultState = {
 const stream = (state, action) => {
   switch (action.type) {
     case "add-local-stream-data":
-      return { ...state, local: action.data };
+      return { ...state, local: { ...state.local, ...action.data } };
+    case "add-remote-stream-data":
+      return { ...state, remote: { ...state.remote, ...action.data } };
   }
 };
 

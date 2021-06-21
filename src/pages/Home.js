@@ -1,40 +1,27 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import Streamer from "../components/Streamer.js";
-// import stream from "../reducers/stream.js";
 import { StoreContext } from "../components/StoreProvider.js";
-const Home = () => {
-  const [state, dispatch] = useContext(StoreContext);
-  const localStreamSource = state.stream.local.streamSource;
-  const openWebcam = async () => {
-    const localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-    dispatch({
-      type: "add-local-stream-data",
-      data: { streamSource: localStream },
-    });
-    // Push tracks from local stream to peer connection
-    // localStream.getTracks().forEach((track) => {
-    //   pc.addTrack(track, localStream);
-    // });
+import StreamController from "../components/StreamController.js";
 
-    // Show stream in HTML video
-    // webcamVideo.srcObject = localStream;
-  };
+const Home = () => {
+  const [state] = useContext(StoreContext);
+  const localStreamSource = state.stream.local.streamSource;
+  const remoteStreamSource = state.stream.remote.streamSource;
+  const tryPlayUnix = state.stream.remote.tryPlayUnix;
   return (
     <HomeStyled>
       <StreamrWrapper>
-        <Streamer streamSource={localStreamSource}></Streamer>
+        <Streamer isLocal streamSource={localStreamSource}></Streamer>
       </StreamrWrapper>
       <ControllerWrapper>
-        <OpenWebController>
-          <OpenWebButton onClick={() => openWebcam()}>開啟攝影機</OpenWebButton>
-        </OpenWebController>
+        <StreamController />
       </ControllerWrapper>
       <StreamrWrapper>
-        <Streamer></Streamer>
+        <Streamer
+          streamSource={remoteStreamSource}
+          tryPlayUnix={tryPlayUnix}
+        ></Streamer>
       </StreamrWrapper>
     </HomeStyled>
   );
@@ -49,12 +36,6 @@ const StreamrWrapper = styled.div`
 `;
 const ControllerWrapper = styled.div`
   width: 200px;
-`;
-const OpenWebController = styled.div``;
-
-const OpenWebButton = styled.button`
-  background-color: rgb(234, 182, 118);
-  width: 100%;
 `;
 
 export default Home;
