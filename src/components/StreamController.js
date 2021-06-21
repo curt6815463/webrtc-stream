@@ -2,29 +2,19 @@ import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { StoreContext } from "../components/StoreProvider.js";
 import { getFireStore } from "../resources/firebase.js";
-import usePeerConnection from "../hook/usePeerConnection.js";
-import useSetRemoteStreamSource from "../hook/useSetRemoteStreamSource.js";
+import { ADD_STREAM_DATA } from "../ActionTypes.js";
+import PropTypes from "prop-types";
 
-const StreamController = () => {
+const StreamController = ({ connection }) => {
   const [, dispatch] = useContext(StoreContext);
   const [callId, setCallId] = useState("");
   const [AnswerCallId, setAnswerCallId] = useState("");
-  const connection = usePeerConnection();
-  useSetRemoteStreamSource(connection);
 
-  const openWebcam = async () => {
-    const localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-    localStream.getTracks().forEach((track) => {
-      connection.addTrack(track, localStream);
-    });
+  const openWebcam = () =>
     dispatch({
-      type: "add-local-stream-data",
-      data: { streamSource: localStream },
+      type: ADD_STREAM_DATA,
+      data: { local: { isActive: true } },
     });
-  };
 
   const callRemote = async () => {
     const firestore = getFireStore();
@@ -118,6 +108,10 @@ const StreamController = () => {
       ></AnswerCallIdInput>
     </OpenWebController>
   );
+};
+
+StreamController.propTypes = {
+  connection: PropTypes.object,
 };
 
 const OpenWebController = styled.div``;

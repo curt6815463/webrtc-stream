@@ -3,25 +3,36 @@ import styled from "styled-components";
 import Streamer from "../components/Streamer.js";
 import { StoreContext } from "../components/StoreProvider.js";
 import StreamController from "../components/StreamController.js";
+import usePeerConnection from "../hook/usePeerConnection.js";
 
 const Home = () => {
   const [state] = useContext(StoreContext);
-  const localStreamSource = state.stream.local.streamSource;
-  const remoteStreamSource = state.stream.remote.streamSource;
-  const tryPlayUnix = state.stream.remote.tryPlayUnix;
+  const connection = usePeerConnection();
+
+  const isLocalActive = state.stream.local.isActive;
+  const isRemoteActive = state.stream.remote.isActive;
   return (
     <HomeStyled>
       <StreamrWrapper>
-        <Streamer isLocal streamSource={localStreamSource}></Streamer>
+        {isLocalActive && connection && (
+          <Streamer
+            isLocal={true}
+            isActive={isLocalActive}
+            connection={connection}
+          ></Streamer>
+        )}
       </StreamrWrapper>
       <ControllerWrapper>
-        <StreamController />
+        <StreamController connection={connection} />
       </ControllerWrapper>
       <StreamrWrapper>
-        <Streamer
-          streamSource={remoteStreamSource}
-          tryPlayUnix={tryPlayUnix}
-        ></Streamer>
+        {connection && (
+          <Streamer
+            isLocal={false}
+            isActive={isRemoteActive}
+            connection={connection}
+          ></Streamer>
+        )}
       </StreamrWrapper>
     </HomeStyled>
   );

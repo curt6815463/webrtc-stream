@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-const useConnection = () => {
-  const [state, setConnectionState] = useState();
+const usePeerConnection = () => {
+  const [peerConnection, setPeerConnection] = useState();
   useEffect(() => {
     const servers = {
       iceServers: [
@@ -15,8 +15,8 @@ const useConnection = () => {
       iceCandidatePoolSize: 10,
     };
     const pc = new RTCPeerConnection(servers);
-    setConnectionState(pc);
+    setPeerConnection(pc);
   }, []);
-  return state;
+  return peerConnection;
 };
-export default useConnection;
+export default usePeerConnection;

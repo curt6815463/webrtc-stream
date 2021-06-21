@@ -1,27 +1,26 @@
 import React, { useRef, useEffect } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import useMediaStream from "../hook/useMediaStream.js";
 
-// import stream from '../reducers/stream.js';
-
-const Streamer = ({ streamSource, isLocal }) => {
+const Streamer = ({ isLocal, isActive, connection, shouldClose }) => {
   const videoRef = useRef(null);
+  const mediaStream = useMediaStream({ isLocal, connection, shouldClose });
   useEffect(() => {
-    if (!streamSource || !videoRef) return;
-    console.log("isLocal, streamSource", isLocal, streamSource);
-    if (streamSource.active) {
-      videoRef.current.srcObject = streamSource;
+    if (isActive && mediaStream) {
+      videoRef.current.srcObject = mediaStream;
       videoRef.current.play();
     }
-  }, [streamSource]);
+  }, [mediaStream, isActive]);
 
   return <Video ref={videoRef}> </Video>;
 };
 
 Streamer.propTypes = {
-  streamSource: PropTypes.object,
-  tryPlayUnix: PropTypes.number,
   isLocal: PropTypes.bool,
+  isActive: PropTypes.bool,
+  shouldClose: PropTypes.bool,
+  connection: PropTypes.object,
 };
 
 const Video = styled.video`
