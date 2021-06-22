@@ -9,6 +9,8 @@ const Streamer = ({ isLocal, isActive, connection, shouldClose }) => {
   useEffect(() => {
     if (isActive && mediaStream) {
       videoRef.current.srcObject = mediaStream;
+      videoRef.current.muted = true;
+      videoRef.current.volume = 0;
       videoRef.current.play();
     }
   }, [mediaStream, isActive]);

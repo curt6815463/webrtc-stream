@@ -14,6 +14,7 @@ const useMediaStream = ({ isLocal, connection, shouldClose }) => {
             video: true,
             audio: true,
           });
+          window.mediaStream = mediaStream;
           mediaStream.getTracks().forEach((track) => {
             connection.addTrack(track, mediaStream);
           });

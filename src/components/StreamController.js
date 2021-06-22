@@ -100,9 +100,9 @@ const StreamController = ({ connection }) => {
   return (
     <OpenWebController>
       <OpenWebButton onClick={openWebcam}>開啟攝影機</OpenWebButton>
-      <CallRemoteButton onClick={callRemote}>撥打電話</CallRemoteButton>
-      <CallIdLabel>{callId}</CallIdLabel>
-      <AnswerRemoteButton onClick={replyRemote}>回覆遠端</AnswerRemoteButton>
+      <CallRemoteButton onClick={callRemote}>開新會議</CallRemoteButton>
+      <CallIdLabel>會議編號：{callId}</CallIdLabel>
+      <AnswerRemoteButton onClick={replyRemote}>進入會議</AnswerRemoteButton>
       <AnswerCallIdInput
         onChange={(event) => setAnswerCallId(event.target.value)}
       ></AnswerCallIdInput>
