@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GlobalStyles from "../resources/GlobalStyles.js";
 import { initialize as initializeFirebase } from "../resources/firebase.js";
@@ -17,12 +17,12 @@ function App() {
       <StoreProvider>
         <GlobalStyles />
         <Switch>
-          <Router path="/">
+          <Route exact path="/">
             <Home />
-          </Router>
-          <Router path="/meet">
+          </Route>
+          <Route path="/meet">
             <Meet />
-          </Router>
+          </Route>
         </Switch>
       </StoreProvider>
     </Router>

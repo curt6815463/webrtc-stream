@@ -7,7 +7,7 @@ const Streamer = ({ isLocal, isActive, connection, shouldClose }) => {
   const videoRef = useRef(null);
   const mediaStream = useMediaStream({ isLocal, connection, shouldClose });
   useEffect(() => {
-    if (isActive && mediaStream) {
+    if (mediaStream) {
       videoRef.current.srcObject = mediaStream;
       videoRef.current.muted = true;
       videoRef.current.volume = 0;
@@ -28,5 +28,6 @@ Streamer.propTypes = {
 const Video = styled.video`
   width: 100%;
   height: 100%;
+  position: absolute;
 `;
 export default Streamer;
