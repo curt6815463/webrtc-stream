@@ -20,7 +20,7 @@ function App() {
           <Route exact path="/">
             <Home />
           </Route>
-          <Route path="/meet">
+          <Route path="/meet/:meetId">
             <Meet />
           </Route>
         </Switch>

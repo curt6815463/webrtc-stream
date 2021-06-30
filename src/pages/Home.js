@@ -1,9 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
+import { getFireStore } from "../resources/firebase.js";
 
 const Home = () => {
   const history = useHistory();
+  const callRemote = async () => {
+    const firestore = getFireStore();
+    const callDoc = firestore.collection("calls").doc();
+    console.log("callDoc", callDoc);
+    // const offerDescription = await connection.createOffer();
+  };
   return (
     <HomeStyled>
       <ControllerBlock>
@@ -12,7 +19,8 @@ const Home = () => {
         <From>
           <CreateMeetButton
             onClick={() => {
-              history.push("/meet");
+              // history.push("/meet");
+              callRemote();
             }}
           >
             建立

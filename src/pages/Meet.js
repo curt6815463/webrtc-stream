@@ -2,39 +2,34 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 import Streamer from "../components/Streamer.js";
 import { StoreContext } from "../components/StoreProvider.js";
-// import StreamController from "../components/StreamController.js";
+
 import usePeerConnection from "../hook/usePeerConnection.js";
+import useRemoteMediaStream from "../hook/useRemoteMediaStream.js";
+import useLocalMediaStream from "../hook/useLocalMediaStream.js";
+import { useParams } from "react-router-dom";
+import useWebRTCSetting from "../hook/useWebRTCSetting.js";
 
 const Home = () => {
+  const { meetId } = useParams;
   const [state] = useContext(StoreContext);
   const connection = usePeerConnection();
+  useWebRTCSetting({ meetId, connection });
 
-  // const isLocalActive = state.stream.local.isActive;
+  const localMediaStream = useLocalMediaStream({ connection });
+  const remoteMediaStream = useRemoteMediaStream({ connection });
   const isRemoteActive = state.stream.remote.isActive;
   return (
     <HomeStyled>
-      <StreamrWrapper>
-        {connection && (
-          <Streamer isLocal={true} connection={connection}></Streamer>
-        )}
-      </StreamrWrapper>
-      {isRemoteActive && connection && (
+      {localMediaStream && (
         <StreamrWrapper>
-          <Streamer isLocal={false} connection={connection}></Streamer>
+          <Streamer mediaStream={localMediaStream}></Streamer>
         </StreamrWrapper>
       )}
-      {/* <ControllerWrapper>
-        <StreamController connection={connection} />
-      </ControllerWrapper>
-      <StreamrWrapper>
-        {connection && (
-          <Streamer
-            isLocal={false}
-            isActive={isRemoteActive}
-            connection={connection}
-          ></Streamer>
-        )}
-      </StreamrWrapper> */}
+      {isRemoteActive && (
+        <StreamrWrapper>
+          <Streamer mediaStream={remoteMediaStream}></Streamer>
+        </StreamrWrapper>
+      )}
     </HomeStyled>
   );
 };
@@ -48,8 +43,5 @@ const StreamrWrapper = styled.div`
   flex: 1;
   position: relative;
 `;
-// const ControllerWrapper = styled.div`
-//   width: 200px;
-// `;
 
 export default Home;
