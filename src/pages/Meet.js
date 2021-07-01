@@ -9,17 +9,23 @@ import useLocalMediaStream from "../hook/useLocalMediaStream.js";
 import { useParams } from "react-router-dom";
 import useWebRTCSetting from "../hook/useWebRTCSetting.js";
 
-const Home = () => {
-  const { meetId } = useParams;
+const Meet = () => {
+  const { meetId } = useParams();
   const [state] = useContext(StoreContext);
   const connection = usePeerConnection();
-  useWebRTCSetting({ meetId, connection });
 
   const localMediaStream = useLocalMediaStream({ connection });
   const remoteMediaStream = useRemoteMediaStream({ connection });
+  useWebRTCSetting({
+    localMediaStream,
+    remoteMediaStream,
+    meetId,
+    connection,
+    isOffer: meetId === "create",
+  });
   const isRemoteActive = state.stream.remote.isActive;
   return (
-    <HomeStyled>
+    <MeetStyled>
       {localMediaStream && (
         <StreamrWrapper>
           <Streamer mediaStream={localMediaStream}></Streamer>
@@ -30,11 +36,11 @@ const Home = () => {
           <Streamer mediaStream={remoteMediaStream}></Streamer>
         </StreamrWrapper>
       )}
-    </HomeStyled>
+    </MeetStyled>
   );
 };
 
-const HomeStyled = styled.div`
+const MeetStyled = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -44,4 +50,4 @@ const StreamrWrapper = styled.div`
   position: relative;
 `;
 
-export default Home;
+export default Meet;

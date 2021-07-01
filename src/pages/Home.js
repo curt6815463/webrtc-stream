@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import { getFireStore } from "../resources/firebase.js";
 
 const Home = () => {
+  const [meetId, setMeetId] = useState();
   const history = useHistory();
   const callRemote = async () => {
-    const firestore = getFireStore();
-    const callDoc = firestore.collection("calls").doc();
-    console.log("callDoc", callDoc);
-    // const offerDescription = await connection.createOffer();
+    history.push("/meet/create");
+  };
+  const replyRemote = () => {
+    if (!meetId) return;
+    history.push(`/meet/${meetId}`);
   };
   return (
     <HomeStyled>
@@ -25,12 +26,11 @@ const Home = () => {
           >
             建立
           </CreateMeetButton>
-          <JoinMeetInput placeholder="輸入會議 ID"></JoinMeetInput>
-          <JoinMeetButton
-            onClick={() => {
-              history.push("/meet");
-            }}
-          >
+          <JoinMeetInput
+            onChange={(e) => setMeetId(e.target.value)}
+            placeholder="輸入會議 ID"
+          ></JoinMeetInput>
+          <JoinMeetButton onClick={() => replyRemote()}>
             加入會議
           </JoinMeetButton>
         </From>

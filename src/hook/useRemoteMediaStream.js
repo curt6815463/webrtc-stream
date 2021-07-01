@@ -7,7 +7,7 @@ const useRemoteMediaStream = ({ connection }) => {
   const [, dispatch] = useContext(StoreContext);
 
   useEffect(() => {
-    if (!mediaStream) {
+    if (!mediaStream && connection) {
       const mediaStream = new MediaStream();
       setMediaStream(mediaStream);
       connection.ontrack = (event) => {

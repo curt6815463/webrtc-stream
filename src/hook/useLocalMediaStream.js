@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 const useLocalMediaStream = ({ connection }) => {
   const [mediaStream, setMediaStream] = useState();
   useEffect(() => {
-    if (!mediaStream) {
+    if (!mediaStream && connection) {
       const startStream = async () => {
         try {
           const mediaStream = await navigator.mediaDevices.getUserMedia({
