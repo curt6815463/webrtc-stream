@@ -1,28 +1,21 @@
-import { useEffect } from "react";
-import { getFireStore } from "../resources/firebase.js";
+import { useCallback } from "react";
+import useFirebase from "../hook/useFirebase.js";
 
-const useWebRTCSetting = ({
-  localMediaStream,
-  remoteMediaStream,
-  connection,
-  meetId,
-  isOffer,
-}) => {
-  useEffect(() => {
-    if (!connection || !localMediaStream || !remoteMediaStream) return;
-    const firestore = getFireStore();
-    const calls = firestore.collection("calls");
-    const callDoc = isOffer ? calls.doc() : calls.doc(meetId);
-    const offerCandidates = callDoc.collection("offerCandidates");
-    const answerCandidates = callDoc.collection("answerCandidates");
-
-    if (isOffer) {
-      console.log("meetId", callDoc.id);
-    }
+const useWebRTCSetting = ({ connection, meetId, isOffer }) => {
+  const {
+    setIceCandidate,
+    setCallData,
+    callDocOnSnapshot,
+    getCallData,
+    updateCallData,
+    remoteIceCandidateOnAdded,
+    bootstrapWebRTCData,
+  } = useFirebase({ isOffer, meetId });
+  const boostrapWebRTC = useCallback(() => {
+    bootstrapWebRTCData();
 
     connection.onicecandidate = (event) => {
-      const candidatesCollection = isOffer ? offerCandidates : answerCandidates;
-      event.candidate && candidatesCollection.add(event.candidate.toJSON());
+      event.candidate && setIceCandidate(event.candidate.toJSON());
     };
 
     const setOfferData = async () => {
@@ -33,22 +26,11 @@ const useWebRTCSetting = ({
         sdp: offerDescription.sdp,
         type: offerDescription.type,
       };
-
-      await callDoc.set({ offer });
-    };
-
-    const setRemoteDescription = () => {
-      callDoc.onSnapshot((snapshot) => {
-        const data = snapshot.data();
-        if (!connection.currentRemoteDescription && data?.answer) {
-          const answerDescription = new RTCSessionDescription(data.answer);
-          connection.setRemoteDescription(answerDescription);
-        }
-      });
+      setCallData({ offer });
     };
 
     const setAnswerData = async () => {
-      const callData = (await callDoc.get()).data();
+      const callData = await getCallData();
 
       const offerDescription = callData.offer;
       await connection.setRemoteDescription(
@@ -62,27 +44,37 @@ const useWebRTCSetting = ({
         sdp: answerDescription.sdp,
       };
 
-      await callDoc.update({ answer });
+      updateCallData({ answer });
     };
+
     if (isOffer) {
       setOfferData();
-      setRemoteDescription();
+      callDocOnSnapshot((snapshot) => {
+        const data = snapshot.data();
+        if (!connection.currentRemoteDescription && data?.answer) {
+          const answerDescription = new RTCSessionDescription(data.answer);
+          connection.setRemoteDescription(answerDescription);
+        }
+      });
     } else {
       setAnswerData();
     }
 
-    const setRemoteCandidate = () => {
-      let candidateData = isOffer ? answerCandidates : offerCandidates;
-      candidateData.onSnapshot((snapshot) => {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            const candidate = new RTCIceCandidate(change.doc.data());
-            connection.addIceCandidate(candidate);
-          }
-        });
-      });
-    };
-    setRemoteCandidate();
-  }, [connection, meetId, isOffer, localMediaStream, remoteMediaStream]);
+    remoteIceCandidateOnAdded((remoteCandidate) => {
+      const candidate = new RTCIceCandidate(remoteCandidate);
+      connection.addIceCandidate(candidate);
+    });
+  }, [
+    bootstrapWebRTCData,
+    callDocOnSnapshot,
+    connection,
+    getCallData,
+    isOffer,
+    remoteIceCandidateOnAdded,
+    setCallData,
+    setIceCandidate,
+    updateCallData,
+  ]);
+  return { boostrapWebRTC };
 };
 export default useWebRTCSetting;

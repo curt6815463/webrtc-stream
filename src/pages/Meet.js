@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import Streamer from "../components/Streamer.js";
 import { StoreContext } from "../components/StoreProvider.js";
@@ -12,17 +12,26 @@ import useWebRTCSetting from "../hook/useWebRTCSetting.js";
 const Meet = () => {
   const { meetId } = useParams();
   const [state] = useContext(StoreContext);
-  const connection = usePeerConnection();
+  const { getConnection } = usePeerConnection();
+  const connection = getConnection();
 
   const localMediaStream = useLocalMediaStream({ connection });
   const remoteMediaStream = useRemoteMediaStream({ connection });
-  useWebRTCSetting({
+
+  const { boostrapWebRTC } = useWebRTCSetting({
     localMediaStream,
     remoteMediaStream,
     meetId,
     connection,
     isOffer: meetId === "create",
   });
+
+  useEffect(() => {
+    if (localMediaStream && remoteMediaStream) {
+      boostrapWebRTC();
+    }
+  }, [boostrapWebRTC, localMediaStream, remoteMediaStream]);
+
   const isRemoteActive = state.stream.remote.isActive;
   return (
     <MeetStyled>
