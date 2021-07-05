@@ -1,1 +1,2 @@
 export const ADD_STREAM_DATA = "ADD_STREAM_DATA";
+export const ADD_OPERATION_DATA = "ADD_OPERATION_DATA";

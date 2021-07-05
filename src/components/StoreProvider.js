@@ -3,6 +3,9 @@ import PropTypes from "prop-types";
 import stream, {
   defaultState as streamDefaultState,
 } from "../reducers/stream.js";
+import operation, {
+  defaultState as operationDefaultState,
+} from "../reducers/operation.js";
 
 export const StoreContext = createContext();
 //https://stackoverflow.com/questions/59200785/react-usereducer-how-to-combine-multiple-reducers
@@ -19,8 +22,11 @@ const combineReducers = (slices) => (state, action) => {
   );
 };
 
-const initialState = { stream: streamDefaultState }; // some state for props a, b
-const rootReducer = combineReducers({ stream });
+const initialState = {
+  stream: streamDefaultState,
+  operation: operationDefaultState,
+}; // some state for props a, b
+const rootReducer = combineReducers({ stream, operation });
 
 const StoreProvider = ({ children }) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);

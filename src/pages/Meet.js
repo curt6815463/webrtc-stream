@@ -8,6 +8,7 @@ import useRemoteMediaStream from "../hook/useRemoteMediaStream.js";
 import useLocalMediaStream from "../hook/useLocalMediaStream.js";
 import { useParams } from "react-router-dom";
 import useWebRTCSetting from "../hook/useWebRTCSetting.js";
+import ShareModal from "../components/ShareModal.js";
 
 const Meet = () => {
   const { meetId } = useParams();
@@ -33,8 +34,10 @@ const Meet = () => {
   }, [boostrapWebRTC, localMediaStream, remoteMediaStream]);
 
   const isRemoteActive = state.stream.remote.isActive;
+  const isShareModalOpen = state.operation.isShareModalOpen;
   return (
     <MeetStyled>
+      {isShareModalOpen && !isRemoteActive && <ShareModal />}
       {localMediaStream && (
         <StreamrWrapper>
           <Streamer mediaStream={localMediaStream}></Streamer>

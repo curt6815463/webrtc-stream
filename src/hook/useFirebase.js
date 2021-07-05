@@ -1,8 +1,11 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import { getFireStore } from "../resources/firebase.js";
 import { useCallback } from "react";
+import { StoreContext } from "../components/StoreProvider.js";
+import { ADD_OPERATION_DATA } from "../ActionTypes.js";
 
 const useFirebase = ({ isOffer, meetId }) => {
+  const [, dispatch] = useContext(StoreContext);
   let offerCandidates = useRef();
   let answerCandidates = useRef();
   let callDoc = useRef();
@@ -58,7 +61,11 @@ const useFirebase = ({ isOffer, meetId }) => {
     offerCandidates.current = callDoc.current.collection("offerCandidates");
     answerCandidates.current = callDoc.current.collection("answerCandidates");
     console.log("id", callDoc.current.id);
-  }, [meetId, isOffer]);
+    dispatch({
+      type: ADD_OPERATION_DATA,
+      data: { meetId: callDoc.current.id },
+    });
+  }, [meetId, isOffer, dispatch]);
 
   return {
     setIceCandidate,
