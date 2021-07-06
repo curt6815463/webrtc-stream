@@ -60,7 +60,6 @@ const useFirebase = ({ isOffer, meetId }) => {
     callDoc.current = isOffer ? calls.doc() : calls.doc(meetId);
     offerCandidates.current = callDoc.current.collection("offerCandidates");
     answerCandidates.current = callDoc.current.collection("answerCandidates");
-    console.log("id", callDoc.current.id);
     dispatch({
       type: ADD_OPERATION_DATA,
       data: { meetId: callDoc.current.id },

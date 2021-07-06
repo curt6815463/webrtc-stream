@@ -14,8 +14,8 @@ const useLocalMediaStream = ({ connection }) => {
             connection.addTrack(track, mediaStream);
           });
           setMediaStream(mediaStream);
-        } catch (error) {
-          console.log(error);
+        } catch (e) {
+          return e;
         }
       };
       startStream();
